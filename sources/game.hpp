@@ -6,24 +6,41 @@
 #define CARDWAR_A_GAME_HPP
 
 #include "player.hpp"
+#include "card.hpp"
 #include <string>
 #include <iostream>
+#include <vector>
+#include <time.h>
+#include <stdlib.h>
 
 class Game {
+private:
+    Player& player1;
+    Player& player2;
+    vector<Card> gameDeck;
+    int tableCards;
+    string lastTurn;
+    string winner;
+
 public:
-    Game(Player player1, Player player2);
+    Game(Player& player1, Player& player2);
 
     void playTurn();
 
-    string printLastTurn();
+    void printLastTurn();
 
     void playAll();
 
-    string printWiner();
+    void printWiner();
 
-    string printLog();
+    void printLog();
 
-    string printStats();
+    void printStats();
+
+    void createDeck();
+
+    void dealCards();
 };
 
 #endif //CARDWAR_A_GAME_HPP
+

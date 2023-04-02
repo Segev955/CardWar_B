@@ -5,24 +5,41 @@
 #ifndef CARDWAR_A_PLAYER_HPP
 #define CARDWAR_A_PLAYER_HPP
 
+#include "card.hpp"
 #include <stdio.h>
 #include <string>
+#include <vector>
+
 namespace ariel{}
 using namespace std;
 
 class Player {
 private:
     string name;
+    vector<Card> stack;
+    int cards;
 
 public:
+    Player();
     Player(string pName);
 
     int stacksize();
 
     int cardesTaken();
 
+    void setStack(vector<Card>);
+
+    vector<Card> getStack();
+
+    void removeCard();
+
+    void addCards(int n);
+    
+    string getName();
+
 
 
 };
 #endif //CARDWAR_A_PLAYER_HPP
+
 
