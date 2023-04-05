@@ -12,6 +12,9 @@ Player::Player() {}
 Player::Player(string pName) {
     this->name = pName;
     this->cards = 0;
+    this->wins = 0;
+    this->losses = 0;
+    this->draws = 0;
 }
 
 int Player::stacksize() {
@@ -40,6 +43,27 @@ void Player::addCards(int n) {
 
 string Player::getName() {
     return this->name;
+}
+
+int Player::getWins() {
+    return this->wins;
+}
+void Player::setWins(){
+    this->wins++;
+}
+
+int Player::getLosses() {
+    return this->losses;
+}
+void Player::setLosses() {
+    this->losses ++;
+}
+
+int Player::getDraws() {
+    return this->draws;
+}
+void Player::setDraws() {
+    this->draws++;
 }
 
 

@@ -18,6 +18,10 @@ private:
     string name;
     vector<Card> stack;
     int cards;
+    //stats:
+    int wins;
+    int losses;
+    int draws;
 
 public:
     Player();
@@ -34,8 +38,17 @@ public:
     void removeCard();
 
     void addCards(int n);
-    
+
     string getName();
+
+    int getWins();
+    void setWins();
+
+    int getLosses();
+    void setLosses();
+
+    int getDraws();
+    void setDraws();
 
 
 
