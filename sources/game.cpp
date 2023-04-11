@@ -109,7 +109,7 @@ void Game::printWiner() {
     else if  (this->player1.cardesTaken() < this->player2.cardesTaken()) {
         cout << this->player2.getName() << endl;
     } else
-        throw invalid_argument("Draw!");
+        cout << "Draw!" << endl;
 }
 void Game::setGameLog(string str) {
     this->gameLog.push_back(str);
