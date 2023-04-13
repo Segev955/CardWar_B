@@ -7,7 +7,7 @@
 using namespace std;
 using namespace ariel;
 
-Game::Game(Player& p1, Player& p2) : player1(p1), player2(p2) {
+Game::Game(Player &p1, Player &p2) : player1(p1), player2(p2) {
 //    this->player1 = p1;
 //    this->player2 = p2;
 //    if (&p1 == &p2) {
@@ -19,6 +19,7 @@ Game::Game(Player& p1, Player& p2) : player1(p1), player2(p2) {
     this->round = 0;
     this->winner = "None";
     this->lastTurn = "Round 0";
+    this->turns = 0;
 
 }
 
@@ -26,7 +27,7 @@ void Game::playTurn() {
     if (&player1 == &player2) {
         throw invalid_argument("Cannot start the game with the same player");
     }
-    if (this->player1.stacksize()  <= 0) {
+    if (this->player1.stacksize() <= 0) {
         throw invalid_argument("Game finish.");
     }
     Card p1Card = this->player1.getStack().back();
@@ -34,36 +35,33 @@ void Game::playTurn() {
     Card p2Card = this->player2.getStack().back();
     this->player2.removeCard(); //pop the card from stack
     this->tableCards += 2;
-    if (p1Card.getNum() > p2Card.getNum()) {
-        if (p2Card.getNum() == 2 && p1Card.getNum() == 14) {// 2 > Ace
+    if (p1Card.getNum() > p2Card.getNum()) { //p1 win:
+        if (p2Card.getNum() == 2 && p1Card.getNum() == 14) {// 2 > Ace -> p2 win
             this->player2.addCards(this->tableCards);
             winner = this->player2.getName();
             this->player2.setWins();
             this->player1.setLosses();
-        }
-        else {
+        } else { //no Ace and 2
             this->player1.addCards(this->tableCards);
             winner = this->player1.getName();
             this->player1.setWins();
             this->player2.setLosses();
         }
-    }
+    }//p2 win:
     else if (p1Card.getNum() < p2Card.getNum()) {
-        if (p1Card.getNum() == 2 && p2Card.getNum() == 14) { // 2 > Ace
+        if (p1Card.getNum() == 2 && p2Card.getNum() == 14) { // 2 > Ace -> p1 win
             this->player1.addCards(this->tableCards);
             winner = this->player1.getName();
             this->player1.setWins();
             this->player2.setLosses();
-        }
-        else {
+        } else { //no Ace and 2
             this->player2.addCards(this->tableCards);
             winner = this->player2.getName();
             this->player2.setWins();
             this->player1.setLosses();
         }
-    }
-    else { //Draw:
-        string s = this->player1.getName() + " played " + p1Card.getType() +  ", " +
+    } else { //Draw:
+        string s = this->player1.getName() + " played " + p1Card.getType() + ", " +
                    this->player2.getName() + " played " + p2Card.getType() + ". Draw.";
         this->setGameLog("         " + s);
         this->player1.setDraws();
@@ -73,18 +71,20 @@ void Game::playTurn() {
             this->player2.removeCard(); //add face down card
             this->tableCards += 2;
         }
-        if (this->player1.stacksize()  > 0) {
+        if (this->player1.stacksize() > 0) {
+            this->turns++;
             this->playTurn();
         } else { //no more cards (at draw play)
-            int tc = this->tableCards/2;
+            int tc = this->tableCards / 2;
             this->player1.addCards(tc);
             this->player2.addCards(tc);
             this->winner = "no-one";
         }
     }
-    this->lastTurn = this->player1.getName() + " played " + p1Card.getType() +  ", " +
-    this->player2.getName() + " played " + p2Card.getType() + ". " + this->winner + " won.";
-    this->round ++;
+    this->lastTurn = this->player1.getName() + " played " + p1Card.getType() + ", " +
+                     this->player2.getName() + " played " + p2Card.getType() + ". " + this->winner + " won.";
+    this->round++;
+    this->turns++;
     this->setGameLog("Round " + std::to_string(this->round) + ": " + this->lastTurn);
     this->tableCards = 0;
 
@@ -105,12 +105,12 @@ void Game::playAll() {
 void Game::printWiner() {
     if (this->player1.cardesTaken() > this->player2.cardesTaken()) {
         cout << this->player1.getName() << endl;
-    }
-    else if  (this->player1.cardesTaken() < this->player2.cardesTaken()) {
+    } else if (this->player1.cardesTaken() < this->player2.cardesTaken()) {
         cout << this->player2.getName() << endl;
     } else
         cout << "Draw!" << endl;
 }
+
 void Game::setGameLog(string str) {
     this->gameLog.push_back(str);
 }
@@ -126,6 +126,15 @@ void Game::printLog() {
 }
 
 void Game::printStats() {
+    //Game:
+    cout << "Game:" << endl;
+    int draws = this->player2.getDraws() + this->player1.getDraws();
+    double rate = static_cast<double >((double)draws/ this->turns);
+    cout << "Rounds: " + std::to_string(this->round) << endl;
+    cout << "Turns: " + std::to_string(this->turns) << endl;
+    cout << "Draws: " + std::to_string(draws) << endl;
+    cout << "Draws rate: " << std::setprecision(2) << rate << endl;
+    cout << "---------------------------------" << endl;
     double ratio = 1;
     //Player 1:
     if (this->player1.getLosses() > 0)
@@ -147,12 +156,15 @@ void Game::printStats() {
     cout << "Ratio: " << std::setprecision(2) << ratio << endl;
     cout << "Draws: " + std::to_string(this->player2.getDraws()) << endl;
     cout << "Cards taken: " + std::to_string(this->player2.cardesTaken()) << endl;
+
+
+
 }
 
 
 void Game::createDeck() {
     vector <Card> gameDeck;
-    int cardNum[]{14,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    int cardNum[]{14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     string cardShape[]{"Diamond", "Heart", "Club", "Spade"};
 
     for (int i = 0; i < 13; ++i) {
@@ -187,4 +199,5 @@ void Game::dealCards() {
     this->player1.setStack(sPlayer1);
     this->player2.setStack(sPlayer2);
 }
+
 

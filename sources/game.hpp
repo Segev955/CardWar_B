@@ -24,6 +24,7 @@ private:
     string lastTurn;
     string winner;
     int round;
+    int turns;
 
 public:
     Game(Player& player1, Player& player2);
@@ -50,4 +51,5 @@ public:
 };
 
 #endif //CARDWAR_A_GAME_HPP
+
 
